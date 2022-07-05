@@ -11,6 +11,7 @@ load_dotenv()
 class BotClient(disnake.Client):
 	async def on_ready(self):
 		print(f"Logged in as {self.user} (ID: {self.user.id})")
+		await self.change_presence(activity=disnake.Activity(type=disnake.ActivityType.listening, name="the inevitable confusion"))
 
 	async def on_message(self, message):
 		if message.author.id == self.user.id:
@@ -23,6 +24,8 @@ class BotClient(disnake.Client):
 			question_text = message.content
 
 			prompt = f"Answer {author_name}'s Question: \"{question_text}\""
+
+			await message.channel.trigger_typing()
 
 			output = generator(prompt, max_length=100, num_return_sequences=1)[0]["generated_text"].replace(prompt, "")
 
