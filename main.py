@@ -17,7 +17,7 @@ class BotClient(disnake.Client):
 		if message.author.id == self.user.id:
 			return
 
-		if message.content.startswith("how ") or message.content.startswith("what "):
+		if message.content.lower().endswith("?") or message.content.lower().startswith("when ") or message.content.lower().startswith("can ") or message.content.lower().startswith("will ") or message.content.lower().startswith("who ") or message.content.lower().startswith("have ") or message.content.lower().startswith("how ") or message.content.lower().startswith("what ") or message.content.lower().endswith("when"):
 			set_seed(random.randint(0, 999999999))
 
 			author_name = message.author.name
