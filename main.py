@@ -11,6 +11,10 @@ load_dotenv()
 class BotClient(disnake.Client):
 	async def on_ready(self):
 		print(f"Logged in as {self.user} (ID: {self.user.id})")
+
+		for guild in self.guilds:
+			print("Server name:", guild.name)
+		
 		await self.change_presence(activity=disnake.Activity(type=disnake.ActivityType.listening, name="the inevitable confusion"))
 
 	async def on_message(self, message):
@@ -18,6 +22,7 @@ class BotClient(disnake.Client):
 			return
 
 		if message.content.lower().endswith("?") or message.content.lower().startswith("when ") or message.content.lower().startswith("can ") or message.content.lower().startswith("will ") or message.content.lower().startswith("who ") or message.content.lower().startswith("have ") or message.content.lower().startswith("how ") or message.content.lower().startswith("what ") or message.content.lower().endswith("when"):
+			print(f"{message.author} ({message.guild.name}): {message.content}")
 			set_seed(random.randint(0, 999999999))
 
 			author_name = message.author.name
@@ -31,8 +36,6 @@ class BotClient(disnake.Client):
 
 			await message.reply(output)
 			return
-		
-		print(message.author, message.content)
 
 client = BotClient()
 client.run(os.environ["BOT_TOKEN"])
