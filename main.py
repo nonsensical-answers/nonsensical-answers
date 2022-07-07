@@ -38,10 +38,6 @@ class BotClient(disnake.Client):
 
 			prompt = f"Answer {author_name}'s Question: \"{question_text}\""
 
-			if len(prompt) > gpt2_max_length:
-				await message.add_reaction(reaction_empty_message)
-				return
-
 			await message.channel.trigger_typing()
 
 			output = generator(prompt, max_length=gpt2_max_length, num_return_sequences=1)[0]["generated_text"].replace(prompt, "").strip()
