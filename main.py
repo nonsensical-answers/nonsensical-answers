@@ -49,5 +49,8 @@ class BotClient(disnake.Client):
 				await message.reply(output)
 				return
 
-client = BotClient()
+intents = disnake.Intents.default()
+intents.message_content = True
+
+client = BotClient(intents=intents)
 client.run(os.environ["BOT_TOKEN"])
