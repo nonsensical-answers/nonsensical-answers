@@ -1,5 +1,6 @@
 from transformers import pipeline, set_seed
 from dotenv import load_dotenv
+import rustrict
 import disnake
 import random
 import os
@@ -9,6 +10,7 @@ generator = pipeline("text-generation", model="gpt2")
 load_dotenv()
 
 reaction_empty_message = "😐"
+reaction_inappropriate_message = "🤬"
 
 class BotClient(disnake.Client):
 	async def on_ready(self):
@@ -24,7 +26,8 @@ class BotClient(disnake.Client):
 			return
 
 		if message.content.lower().endswith("?") or message.content.lower().startswith("why ") or message.content.lower().startswith("does ") or message.content.lower().startswith("when ") or message.content.lower().startswith("can ") or message.content.lower().startswith("will ") or message.content.lower().startswith("who ") or message.content.lower().startswith("have ") or message.content.lower().startswith("how ") or message.content.lower().startswith("what ") or message.content.lower().endswith("when"):
-			print(f"{message.author} ({message.guild.name}): {message.content}")
+			line = "=" * 50
+			print(f"{line}\n{message.author} ({message.guild.name}): \"{message.content}\"\n{line}")
 			
 			gpt2_seed = random.randint(0, 999999999)
 			gpt2_max_length = 100
@@ -46,6 +49,13 @@ class BotClient(disnake.Client):
 				await message.add_reaction(reaction_empty_message)
 				return
 			else:
+				line = "-" * 50
+				print(f"{line}\n{output}\n{line}")
+
+				if rustrict.is_inappropriate(output):
+					await message.add_reaction(reaction_inappropriate_message)
+					return
+				
 				await message.reply(output)
 				return
 
