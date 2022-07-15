@@ -9,7 +9,7 @@ generator = pipeline("text-generation", model="gpt2")
 
 load_dotenv()
 
-reaction_empty_message = "😐"
+reaction_failed_message = "😐"
 reaction_inappropriate_message = "🤬"
 
 class BotClient(disnake.Client):
@@ -21,6 +21,8 @@ class BotClient(disnake.Client):
 		
 		await self.change_presence(activity=disnake.Activity(type=disnake.ActivityType.listening, name="the inevitable confusion"))
 
+		print("Waiting for questions...")
+
 	async def on_message(self, message):
 		if message.author.id == self.user.id:
 			return
@@ -28,6 +30,10 @@ class BotClient(disnake.Client):
 		if message.content.lower().endswith("?") or message.content.lower().startswith("why ") or message.content.lower().startswith("does ") or message.content.lower().startswith("when ") or message.content.lower().startswith("can ") or message.content.lower().startswith("will ") or message.content.lower().startswith("who ") or message.content.lower().startswith("have ") or message.content.lower().startswith("how ") or message.content.lower().startswith("what ") or message.content.lower().endswith("when"):
 			line = "=" * 50
 			print(f"{line}\n{message.author} ({message.guild.name}, #{message.channel.name}): \"{message.content}\"\n{line}")
+
+			if "general" in message.channel.name.lower():
+				await message.reply("I noticed that the channel you asked that question in contains the text \"general\".\nUnfortunately, I can't answer questions in the general channel.\n**If you are asking me a question, please send it in a different channel.**")
+				return
 			
 			gpt2_seed = random.randint(0, 999999999)
 			gpt2_max_length = 100
@@ -50,7 +56,10 @@ class BotClient(disnake.Client):
 			output = generator(prompt, max_length=gpt2_max_length, num_return_sequences=1)[0]["generated_text"].replace(prompt, "").strip()
 
 			if output == "":
-				await message.add_reaction(reaction_empty_message)
+				await message.add_reaction(reaction_failed_message)
+				return
+			elif "god" in output.lower():
+				await message.add_reaction(reaction_failed_message)
 				return
 			else:
 				line = "-" * 50
