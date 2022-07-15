@@ -32,7 +32,10 @@ class BotClient(disnake.Client):
 			print(f"{line}\n{message.author} ({message.guild.name}, #{message.channel.name}): \"{message.content}\"\n{line}")
 
 			if "general" in message.channel.name.lower():
-				await message.reply("I noticed that the channel you asked that question in contains the text \"general\".\nUnfortunately, I can't answer questions in the general channel.\n**If you are asking me a question, please send it in a different channel.**")
+				try:
+					await message.reply("I noticed that the channel you asked that question in contains the text \"general\".\nUnfortunately, I can't answer questions in the general channel.\n**If you are asking me a question, please send it in a different channel.**")
+				except:
+					print("The bot does not have permission to send messages in this channel.")
 				return
 			
 			gpt2_seed = random.randint(0, 999999999)
@@ -58,7 +61,7 @@ class BotClient(disnake.Client):
 			if output == "":
 				await message.add_reaction(reaction_failed_message)
 				return
-			elif "god" in output.lower() or "http://" in output or "https://" in output:
+			elif "god" in output.lower() or "http://" in output or "https://" in output or "Answer {author_name}'s".lower() in output.lower():
 				line = "-" * 50
 				print(f"{line}\n{output}\n{line}")
 
