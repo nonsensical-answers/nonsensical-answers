@@ -58,7 +58,7 @@ class BotClient(disnake.Client):
 			if output == "":
 				await message.add_reaction(reaction_failed_message)
 				return
-			elif "god" in output.lower() or "http://" in output.lower() or "https://" in output:
+			elif "god" in output.lower() or "http://" in output or "https://" in output:
 				line = "-" * 50
 				print(f"{line}\n{output}\n{line}")
 
