@@ -27,7 +27,7 @@ class BotClient(disnake.Client):
 
 		if message.content.lower().endswith("?") or message.content.lower().startswith("why ") or message.content.lower().startswith("does ") or message.content.lower().startswith("when ") or message.content.lower().startswith("can ") or message.content.lower().startswith("will ") or message.content.lower().startswith("who ") or message.content.lower().startswith("have ") or message.content.lower().startswith("how ") or message.content.lower().startswith("what ") or message.content.lower().endswith("when"):
 			line = "=" * 50
-			print(f"{line}\n{message.author} ({message.guild.name}): \"{message.content}\"\n{line}")
+			print(f"{line}\n{message.author} ({message.guild.name}, #{message.channel.name}): \"{message.content}\"\n{line}")
 			
 			gpt2_seed = random.randint(0, 999999999)
 			gpt2_max_length = 100
@@ -41,7 +41,11 @@ class BotClient(disnake.Client):
 
 			prompt = f"Answer {author_name}'s Question: \"{question_text}\""
 
-			await message.channel.trigger_typing()
+			try:
+				await message.channel.trigger_typing()
+			except:
+				print("The bot does not have permission to send messages in this channel.")
+				return
 
 			output = generator(prompt, max_length=gpt2_max_length, num_return_sequences=1)[0]["generated_text"].replace(prompt, "").strip()
 
