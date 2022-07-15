@@ -58,7 +58,7 @@ class BotClient(disnake.Client):
 			if output == "":
 				await message.add_reaction(reaction_failed_message)
 				return
-			elif "god" in output.lower():
+			elif "god" in output.lower() or "http://" in output.lower() or "https://" in output.lower():
 				await message.add_reaction(reaction_failed_message)
 				return
 			else:
